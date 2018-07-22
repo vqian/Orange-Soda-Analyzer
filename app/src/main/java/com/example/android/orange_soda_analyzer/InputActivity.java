@@ -1,5 +1,7 @@
 package com.example.android.orange_soda_analyzer;
 
+import android.content.Context;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.app.*;
 import android.os.*;
@@ -11,14 +13,37 @@ public class InputActivity extends AppCompatActivity {
     Dialog myDialog;
     ArrayList<String> messages1 = new ArrayList<>();
     ArrayList<String> messages2 = new ArrayList<>();
+
+    Button analyze;
     String conversationHistory = "";
+
+    private Activity context = this;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        myDialog = new Dialog(this);
         setContentView(R.layout.activity_input);
+
+        myDialog = new Dialog(this);
+        analyze = (Button) findViewById(R.id.buttonAnalyze);
+
+        analyze.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent analyzeIntent = new Intent(context, AnalyzeActivity.class);
+
+                String json1 = convertArrayListToJSON(messages1);
+                String json2 = convertArrayListToJSON(messages2);
+
+                analyzeIntent.putExtra("json1", json1);
+                analyzeIntent.putExtra("json2", json2);
+
+                startActivity(analyzeIntent);
+
+            }
+        });
+
     }
 
     public void getMessages1(View v){
@@ -39,19 +64,23 @@ public class InputActivity extends AppCompatActivity {
     }
 
     public String convertArrayListToJSON(ArrayList<String> messages){
-        String messagesJSON = "{\"documents\":[";
-        for(int i = 0; i < messages.size() - 1; i++){
-            messagesJSON += convertMessageToJSONObject(messages.get(i)) + ",";
+        if(messages.size() != 0) {
+            String messagesJSON = "{\"documents\":[";
+            for (int i = 0; i < messages.size() - 1; i++) {
+                messagesJSON += convertMessageToJSONObject(messages.get(i), i) + ",";
+            }
+            messagesJSON += convertMessageToJSONObject(messages.get(messages.size() - 1), messages.size() - 1);
+            messagesJSON += "]}";
+            return messagesJSON;
+        } else {
+            return "{\"documents\":[]}";
         }
-        messagesJSON += convertMessageToJSONObject(messages.get(messages.size() - 1));
-        messagesJSON += "]}";
-        return messagesJSON;
     }
 
-    public String convertMessageToJSONObject(String message){
-        String messageJSONObject = "\"language\": \"en\",\n" +
-                "\"id\": \"1\",\n" +
-                "\"text\": \"" + message + "\"";
+    public String convertMessageToJSONObject(String message, int id){
+        String messageJSONObject = "{\"language\": \"en\",\n" +
+                "\"id\": \"" + id + "\",\n" +
+                "\"text\": \"" + message + "\"}";
         return messageJSONObject;
     }
 }

@@ -25,7 +25,7 @@ public class TextAnalyticsTask {
     private static TextView resultsText = null;
     private static int index;
 
-
+    private static boolean taskEnd;
 
     private static String jsonInput1;
     private static String jsonInput2;
@@ -49,11 +49,16 @@ public class TextAnalyticsTask {
     public static void runSentimentTask(){
         index = 0;
         scores = new ArrayList<ArrayList<Double>>();
+        taskEnd = false;
         new TextAnalysisTask().execute(jsonInput1);
     }
 
     public static void setResultsText(TextView resultsText) {
         TextAnalyticsTask.resultsText = resultsText;
+    }
+
+    public static boolean isTaskEnd() {
+        return taskEnd;
     }
 
     public static void setJsonInput1(String jsonInput1) {
@@ -120,7 +125,7 @@ public class TextAnalyticsTask {
             }
 
             if(index == 1){
-
+                taskEnd = true;
             }
 
         }
@@ -128,11 +133,6 @@ public class TextAnalyticsTask {
 
     public static ArrayList<ArrayList<Double>> getScores() {
         return scores;
-    }
-
-    private static double compatScore(ArrayList<ArrayList<Double>> scores){
-        
-        return
     }
 
 

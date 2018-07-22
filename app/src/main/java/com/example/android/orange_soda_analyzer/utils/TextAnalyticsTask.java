@@ -4,6 +4,8 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.widget.TextView;
 
+import com.example.android.orange_soda_analyzer.AnalyzeActivity;
+
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
@@ -11,6 +13,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Scanner;
+
+import static java.lang.Math.abs;
 
 /**
  * Created by abhin on 7/21/2018.
@@ -122,10 +126,14 @@ public class TextAnalyticsTask {
             if(index == 0){
                 runSentimentTask(jsonInput2);
                 index++;
-            }
+            } else if(index == 1){
+                ArrayList<Double> person1 = scores.get(0);
+                ArrayList<Double> person2 = scores.get(1);
 
-            if(index == 1){
-                taskEnd = true;
+                double crush2on1 = calculateCrushPercentage(person1, person2);
+                double crush1on2 = calculateCrushPercentage(person2, person1);
+
+                resultsText.setText("Person 1 Crush Percent on Person 2: " + crush1on2 + "\n\n" + "Person 2 Crush Percent on Person 1: " + crush2on1);
             }
 
         }
@@ -135,5 +143,12 @@ public class TextAnalyticsTask {
         return scores;
     }
 
+    public static double calculateCrushPercentage(ArrayList<Double> sentiments1, ArrayList<Double> sentiments2){
+        double crushPercentage = 0;
+        for(int i = 0; i < sentiments1.size() - 1; i++){
+            crushPercentage += 1 - abs(abs(sentiments1.get(i)) - abs(sentiments2.get(i + 1)));
+        }
+        return crushPercentage / (sentiments1.size() - 1) * 100; // % sentiments2 person "crushes" on sentiments1 person
+    }
 
 }

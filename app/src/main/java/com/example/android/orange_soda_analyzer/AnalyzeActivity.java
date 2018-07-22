@@ -12,6 +12,8 @@ import com.example.android.orange_soda_analyzer.utils.TextAnalyticsTask;
 
 import java.util.ArrayList;
 
+import static java.lang.Math.abs;
+
 public class AnalyzeActivity extends AppCompatActivity {
 
     private static final String TAG = "Analyze Activity";
@@ -40,21 +42,12 @@ public class AnalyzeActivity extends AppCompatActivity {
 
         TextAnalyticsTask.runSentimentTask();
 
-        try{
-            while (TextAnalyticsTask.isTaskEnd()){
-                Thread.sleep(100);
-            }
-        } catch (InterruptedException e){
-            e.printStackTrace();
-        }
-
-        scores = TextAnalyticsTask.getScores();
-
         // Use scores double arrayList to analyze compatibility here
         // scores.get(0) is person 1 double arrayList
         // scores.get(1) is person 2 double arrayList
 
         // Each arrayList has the sentiment for the corresponding phrase in order added
+
 
 
     }
